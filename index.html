@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>OpenVINO Detection Dashboard</title>
+  <style>
+    body {
+      background: #0f172a;
+      color: white;
+      font-family: "Segoe UI", Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+    h1 { color: #38bdf8; margin-top: 20px; }
+    .tabs {
+      display: flex;
+      justify-content: center;
+      margin: 20px 0;
+      gap: 10px;
+    }
+    .tab {
+      padding: 10px 20px;
+      border: 1px solid #38bdf8;
+      border-radius: 10px;
+      cursor: pointer;
+      background: #1e293b;
+      color: #38bdf8;
+    }
+    .tab.active { background: #38bdf8; color: #0f172a; font-weight: bold; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; margin-top: 20px; }
+    #video-stream {
+      border: 3px solid #38bdf8;
+      border-radius: 10px;
+      width: 70%;
+      max-width: 800px;
+      margin-top: 10px;
+    }
+    input[type="file"], input[type="text"], button {
+      margin-top: 15px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: none;
+      font-size: 16px;
+    }
+    button {
+      background: #38bdf8;
+      color: #0f172a;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover { background: #7dd3fc; }
+    img.result { margin-top: 20px; max-width: 70%; border-radius: 10px; border: 2px solid #38bdf8; }
+  </style>
+</head>
+<body>
+  <h1>OpenVINO Smart Detection Dashboard</h1>
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('upload-image')">🖼️ Upload Image</div>
+    <div class="tab" onclick="switchTab('upload-video')">🎞️ Upload Video</div>
+    <div class="tab" onclick="switchTab('image-url')">🌐 Image URL</div>
+    <div class="tab" onclick="switchTab('live')">📹 Live Stream</div>
+  </div>
+
+  <!-- Image Upload -->
+  <div id="upload-image" class="tab-content active">
+    <h2>Upload an Image</h2>
+    <input type="file" id="image-input" accept="image/*">
+    <button onclick="uploadImage()">Detect</button>
+    <div><img id="image-result" class="result" alt=""></div>
+  </div>
+
+  <!-- Video Upload -->
+  <div id="upload-video" class="tab-content">
+    <h2>Upload a Video</h2>
+    <input type="file" id="video-input" accept="video/*">
+    <button onclick="uploadVideo()">Process Video</button>
+    <p style="color:#94a3b8;">Processed video will be downloaded automatically.</p>
+  </div>
+
+  <!-- Image URL -->
+  <div id="image-url" class="tab-content">
+    <h2>Process Image from URL</h2>
+    <input type="text" id="url-input" placeholder="Enter image URL..." size="50">
+    <button onclick="processURL()">Detect</button>
+    <div><img id="url-result" class="result" alt=""></div>
+  </div>
+
+  <!-- Live Stream -->
+  <div id="live" class="tab-content">
+    <h2>Live Object Detection</h2>
+    <img id="video-stream" src="/video_stream/?source=0" alt="Live Stream">
+  </div>
+
+  <script>
+    // Tab switching logic
+    function switchTab(tabId) {
+      document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+      document.querySelectorAll(".tab-content").forEach(c => c.classList.remove("active"));
+      document.querySelector(`.tab[onclick="switchTab('${tabId}')"]`).classList.add("active");
+      document.getElementById(tabId).classList.add("active");
+    }
+
+    // Upload image and get detection result
+    async function uploadImage() {
+      const fileInput = document.getElementById("image-input");
+      if (!fileInput.files.length) return alert("Please select an image file!");
+      const formData = new FormData();
+      formData.append("file", fileInput.files[0]);
+
+      const res = await fetch("/upload_image/", { method: "POST", body: formData });
+      if (!res.ok) return alert("Error: " + (await res.text()));
+
+      const blob = await res.blob();
+      document.getElementById("image-result").src = URL.createObjectURL(blob);
+    }
+
+    // Upload video (processed file will be saved)
+    async function uploadVideo() {
+      const fileInput = document.getElementById("video-input");
+      if (!fileInput.files.length) return alert("Please select a video file!");
+      const formData = new FormData();
+      formData.append("file", fileInput.files[0]);
+
+      const res = await fetch("/upload_video/", { method: "POST", body: formData });
+      if (!res.ok) return alert("Error: " + (await res.text()));
+
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "processed_video.mp4";
+      a.click();
+    }
+
+    // Process image from URL
+    async function processURL() {
+      const url = document.getElementById("url-input").value;
+      if (!url) return alert("Please enter an image URL!");
+      const res = await fetch("/image_url/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url })
+      });
+      if (!res.ok) return alert("Error: " + (await res.text()));
+
+      const blob = await res.blob();
+      document.getElementById("url-result").src = URL.createObjectURL(blob);
+    }
+  </script>
+</body>
+</html>
