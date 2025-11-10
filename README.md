@@ -43,7 +43,7 @@ Includes a live web dashboard for uploading images, videos, or viewing webcam st
 ### 1️⃣ Clone the repository
 
 ```bash
-git clone https://github.com/<your-username>/openvino-fastapi-detection.git
+git clone https://github.com/Md-Rasel-Uddin/OpenVINO-Smart-Object-Detection
 cd openvino-fastapi-detection
 ```
 
