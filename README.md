@@ -127,14 +127,6 @@ It automatically displays detection counts and annotated output in real time.
 
 ---
 
-## 🖼️ Sample Results
-
-| Input | Output |
-|--------|---------|
-| ![input](https://via.placeholder.com/300x200.png?text=Original+Image) | ![output](https://via.placeholder.com/300x200.png?text=Detections+Overlay) |
-
-
----
 
 ## 🧾 Requirements
 
