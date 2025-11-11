@@ -105,7 +105,7 @@ Then open your browser and navigate to:
 ---
 
 ## 🌐 Dashboard Interface
-
+the dashboard endpoint is '/dashboard'.
 The dashboard (`index.html`) lets you:
 - 📸 Upload image files for detection  
 - 🎥 Upload video files for processing  
