@@ -145,4 +145,9 @@ pip install -r requirements.txt
 ```
 
 ---
+# sample image
+<img width="634" height="618" alt="traffic" src="https://github.com/user-attachments/assets/f4c52843-ed74-464e-a7d7-3a440c79d023" />
+
+<img width="1441" height="977" alt="image" src="https://github.com/user-attachments/assets/463ab5b2-c360-4569-bf69-6c3c555554d5" />
+
 
